@@ -18,6 +18,10 @@ class MyButton extends StatelessWidget {
       buttonColor = Colors.deepPurple;
     } else if (child == '') {
       buttonColor = const Color.fromARGB(255, 181, 138, 255);
+    } else if (child == 'Easy') {
+      buttonColor = const Color.fromARGB(255, 201, 180, 237);
+    } else if (child == 'Hard') {
+      buttonColor = const Color.fromARGB(255, 53, 48, 63);
     }
 
     return Padding(

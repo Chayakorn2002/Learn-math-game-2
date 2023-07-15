@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_game/const.dart';
+import 'package:lottie/lottie.dart';
 
 class ResultMessage extends StatelessWidget {
   final int numberA;
@@ -36,82 +36,41 @@ class ResultMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isCorrect) {
-      return AlertDialog(
-        backgroundColor: Colors.deepPurple,
-        content: SizedBox(
-            height: 200,
+      print('tada');
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: AlertDialog(
+          backgroundColor: Colors.deepPurple,
+          content: SizedBox(
+            height: 302,
             child: Column(
               children: [
-                Text(
-                  message,
-                  style: whiteTextStyle,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  '$numberA + $numberB = ${numberA + numberB}',
-                  style: whiteTextStyle,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple[300],
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4),
-                    ),
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      icon,
-                      color: Colors.white,
-                    ),
-                    onPressed: onTap,
-                  ),
-                ),
+                // Lottie.network(
+                //     'https://assets2.lottiefiles.com/packages/lf20_QLAqiXI9Pm.json'),
+                Lottie.asset('assets/lotties/correct.json'),
               ],
-            )),
+            ),
+          ),
+        ),
       );
     } else {
-      return AlertDialog(
-        backgroundColor: Colors.deepPurple,
-        content: SizedBox(
-            height: 200,
+      return GestureDetector(
+        onTap: onTap,
+        child: AlertDialog(
+          backgroundColor: Colors.deepPurple,
+          content: SizedBox(
+            height: 302,
             child: Column(
               children: [
-                Text(
-                  message,
-                  style: whiteTextStyle,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  '$numberA + $numberB ≠ $userAnswer',
-                  style: whiteTextStyle,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple[300],
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4),
-                    ),
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      icon,
-                      color: Colors.white,
-                    ),
-                    onPressed: onTap,
-                  ),
-                ),
+                // Lottie.network(
+                //     'https://assets7.lottiefiles.com/packages/lf20_1zvbfarz.json',
+                //     ),
+                Lottie.asset('assets/lotties/incorrect.json'),
               ],
-            )),
+            ),
+          ),
+        ),
       );
     }
   }

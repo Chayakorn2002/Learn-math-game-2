@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:math_game/const.dart';
 import 'package:math_game/utils/my_button.dart';
 import 'package:math_game/utils/result_message.dart';
+import 'package:math_game/widgets/colored_safe_area.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,10 +30,9 @@ class _HomePageState extends State<HomePage> {
     '=',
     '',
     '0',
+    '',
+    'Easy',
   ];
-
-  List<bool> isCorrect = [false, false, false, false]; // maximum of 4
-  int answerCount = 0;
 
   // numberA, numberB
   int numberA = Random().nextInt(10) + 1;
@@ -40,6 +40,11 @@ class _HomePageState extends State<HomePage> {
 
   // user answer
   String userAnswer = '';
+
+  // streak count
+  int streakCount = 0;
+
+  bool isEasy = true;
 
   // user tapped a button
   void buttonTapped(String button) {
@@ -57,7 +62,21 @@ class _HomePageState extends State<HomePage> {
         if (userAnswer.isNotEmpty) {
           userAnswer = userAnswer.substring(0, userAnswer.length - 1);
         }
-      } else if (userAnswer.length < 3) {
+      } else if (button == 'Easy') {
+        // Easy mode
+        numpad[15] = 'Hard';
+        isEasy = false;
+
+        numberA = randomNumber.nextInt(100) + 1;
+        numberB = randomNumber.nextInt(100) + 1;
+      } else if (button == 'Hard') {
+        // Hard mode
+        numpad[15] = 'Easy';
+        isEasy = true;
+
+        numberA = randomNumber.nextInt(10) + 1;
+        numberB = randomNumber.nextInt(10) + 1;
+      } else if (userAnswer.length < 4) {
         // maximum input
         userAnswer += button;
       }
@@ -81,13 +100,8 @@ class _HomePageState extends State<HomePage> {
           );
         },
       );
-
-      isCorrect[answerCount] = true;
-      answerCount++;
-
-      if (answerCount == 4) {
-        // go to next level
-      }
+      streakCount++;
+      print('correct');
     }
     // wrong answer
     else {
@@ -105,9 +119,7 @@ class _HomePageState extends State<HomePage> {
           );
         },
       );
-
-      isCorrect = [false];
-      answerCount = 0;
+      streakCount = 0;
     }
   }
 
@@ -124,8 +136,13 @@ class _HomePageState extends State<HomePage> {
     });
 
     // creating new question
-    numberA = randomNumber.nextInt(10) + 1;
-    numberB = randomNumber.nextInt(10) + 1;
+    if (isEasy) {
+      numberA = randomNumber.nextInt(10) + 1;
+      numberB = randomNumber.nextInt(10) + 1;
+    } else {
+      numberA = randomNumber.nextInt(100) + 1;
+      numberB = randomNumber.nextInt(100) + 1;
+    }
   }
 
   void goBackToQuestion() {
@@ -137,95 +154,75 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 181, 138, 255),
-      body: Column(
-        children: [
-          // level progress
-          Container(
-            height: 175,
-            color: Colors.deepPurple,
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: GridView.builder(
-                itemCount: 4,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4),
-                itemBuilder: (context, index) {
-                  if (isCorrect[index]) {
-                    return Container(
-                      margin: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.all(
+      body: ColoredSafeArea(
+        child: Column(
+          children: [
+            // level progress
+            Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              height: 120,
+              color: Colors.deepPurple,
+              child: Text(
+                streakCount > 1
+                    ? '$streakCount streaks'
+                    : '$streakCount streak',
+                style: whiteTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
+
+            // question
+            Expanded(
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // question
+                    Text(
+                      '$numberA + $numberB = ',
+                      style: whiteTextStyle,
+                    ),
+
+                    // answer box
+                    Container(
+                      height: 80,
+                      width: 130,
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple[400],
+                        borderRadius: const BorderRadius.all(
                           Radius.circular(4),
                         ),
                       ),
-                    );
-                  }
-                  return Container(
-                    margin: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple[400],
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(4),
-                      ),
+                      child: Center(
+                          child: Text(userAnswer, style: whiteTextStyle)),
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          // question
-          Expanded(
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // question
-                  Text(
-                    '$numberA + $numberB = ',
-                    style: whiteTextStyle,
-                  ),
-
-                  // answer box
-                  Container(
-                    height: 70,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple[400],
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(4),
-                      ),
-                    ),
-                    child:
-                        Center(child: Text(userAnswer, style: whiteTextStyle)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // numpad
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: numpad.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
+                  ],
                 ),
-                itemBuilder: (context, index) {
-                  return MyButton(
-                    child: numpad[index],
-                    onTap: () => buttonTapped(numpad[index]),
-                  );
-                },
               ),
             ),
-          ),
-        ],
+            // numpad
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: numpad.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                  ),
+                  itemBuilder: (context, index) {
+                    return MyButton(
+                      child: numpad[index],
+                      onTap: () => buttonTapped(numpad[index]),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
